@@ -31,3 +31,15 @@ async def create_reservation(req: Reservation):
   result = await database["reservations"].insert_one(req_dict)
 
   return {"message": "Reservation created", "id": str(result.inserted_id)}
+
+
+@app.get("/get")
+async def get_reservation(roomName: str, date: str):
+  print(roomName, date)
+  query = {"roomName": roomName, "date": date}
+  result = await database["reservations"].find(query).to_list()
+
+  for reservation in result:
+    reservation["_id"] = str(reservation["_id"])
+    
+  return result

@@ -14,6 +14,7 @@ import {
 } from "./ui/form";
 
 interface IResevation {
+  _id: string;
   roomName: string;
   topic: string;
   attendees: string[];
@@ -127,7 +128,7 @@ const Modal = ({
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `http://localhost:8000/reservations?roomName=${roomName}&date=${formatSelectDate}`,
+        `http://localhost:8000/get?roomName=${roomName}&date=${formatSelectDate}`,
       );
 
       const result: IResevation[] = await response.json();
