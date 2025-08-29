@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "./ui/form";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface IResevation {
   _id: string;
   roomName: string;
@@ -91,7 +93,7 @@ const Modal = ({
     };
 
     try {
-      const response = await fetch("http://localhost:8000/create", {
+      const response = await fetch(`${API_URL}/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
