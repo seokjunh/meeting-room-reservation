@@ -52,6 +52,9 @@ jobs:
             cd meeting.namooinc.com
 
             cat <<EOF > .env
+            MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_USERNAME }}
+            MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_PASSWORD }}
+            MONGO_URI=${{ secrets.MONGO_URI }}
             VITE_API_URL=${{ secrets.VITE_API_URL }}
             EOF
 
