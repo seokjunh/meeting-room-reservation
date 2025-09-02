@@ -28,7 +28,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:back-latest
 
-      - name: Fastapi Build and push
+      - name: FastAPI Build and push
         uses: docker/build-push-action@v6
         with:
           context: backend/.

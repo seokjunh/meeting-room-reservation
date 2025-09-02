@@ -1,0 +1,43 @@
+service:
+  mongodb:
+    image: mongo
+    container_name: mongo_db
+    restart: always
+    ports:
+      - 27017:27017
+    env_file:
+      - .env
+    volumes:
+      - data:/data/db
+    networks:
+      - meeting-net
+  fastapi:
+    image: seokjunh/namoo-meeting:back-latest
+    container_name: fastapi_app
+    restart: always
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - meeting-net
+  react:
+    image: seokjunh/namoo-meeting:front-latest
+    container_name: react_app
+    restart: always
+    ports:
+      - 3003:3003
+    env_file:
+      - .env
+    depends_on:
+      - fastapi
+    networks:
+      - meeting-net
+
+volumes:
+  data:
+
+networks:
+  meeting-net:
