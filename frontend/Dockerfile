@@ -15,5 +15,5 @@ RUN pnpm run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 3003
 CMD ["nginx", "-g", "daemon off;"]
