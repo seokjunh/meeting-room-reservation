@@ -7,9 +7,6 @@
 # Python 버전 설정 파일
 .python-version
 
-# uv.lock (의존성 잠금 파일)
-uv.lock
-
 .env
 
 app/__pycache__/
