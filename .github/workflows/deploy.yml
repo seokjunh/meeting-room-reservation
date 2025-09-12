@@ -26,14 +26,14 @@ jobs:
         with:
           context: frontend/.
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting-front:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:front-latest
 
       - name: FastAPI Build and push
         uses: docker/build-push-action@v6
         with:
           context: backend/.
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting-back:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:back-latest
 
       - name: SSH & Deploy on Server
         uses: appleboy/ssh-action@v1

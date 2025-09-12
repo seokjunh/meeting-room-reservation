@@ -1,4 +1,4 @@
-service:
+services:
   mongodb:
     image: mongo
     container_name: mongo_db
