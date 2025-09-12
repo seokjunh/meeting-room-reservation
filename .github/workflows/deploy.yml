@@ -26,14 +26,37 @@ jobs:
         with:
           context: frontend/.
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:front-latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting-front:latest
 
       - name: FastAPI Build and push
         uses: docker/build-push-action@v6
         with:
           context: backend/.
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:back-latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting-back:latest
+
+      - name: SSH & Deploy on Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 32111
+          script: |
+            cd /home/homepage
+            if [ ! -d meeting.namooinc.com ]; then
+              mkdir -p meeting.namooinc.com
+            fi
+
+      - name: Copy docker-compose.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 32111
+          source: "./docker-compose.yml"
+          target: "/home/homepage/meeting.namooinc.com/"
 
       - name: SSH & Deploy on Server
         uses: appleboy/ssh-action@v1
@@ -43,11 +66,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/homepage
-
-            if [ ! -d meeting.namooinc.com ]; then
-              mkdir -p meeting.namooinc.com
-            fi
 
             cd meeting.namooinc.com
 
@@ -58,4 +76,4 @@ jobs:
             VITE_API_URL=${{ secrets.VITE_API_URL }}
             EOF
 
-            docker compose pull && docker compose down && docker compose up -d
+            docker compose build --no-cache && docker compose down && docker compose up -d

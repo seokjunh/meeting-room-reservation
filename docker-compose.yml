@@ -27,17 +27,23 @@ service:
     image: seokjunh/namoo-meeting:front-latest
     container_name: react_app
     restart: always
-    ports:
-      - 3003:3003
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: tech.namooinc.com
+      VIRTUAL_PORT: 3000
+      LETSENCRYPT_HOST: tech.namooinc.com
+      LETSENCRYPT_EMAIL: admin@namooinc.com
     depends_on:
       - fastapi
     networks:
       - meeting-net
+      - proxy
 
 volumes:
   data:
 
 networks:
   meeting-net:
+  proxy:
+    external: true
