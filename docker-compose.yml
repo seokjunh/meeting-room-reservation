@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: mongo
-    container_name: mongo_db
+    container_name: meeting-namoo-db
     restart: always
     ports:
       - 27017:27017
@@ -13,7 +13,7 @@ services:
       - meeting-net
   fastapi:
     image: seokjunh/namoo-meeting:back-latest
-    container_name: fastapi_app
+    container_name: meeting-namoo-back
     restart: always
     ports:
       - 8000:8000
@@ -25,14 +25,14 @@ services:
       - meeting-net
   react:
     image: seokjunh/namoo-meeting:front-latest
-    container_name: react_app
+    container_name: meeting-namoo-front
     restart: always
     env_file:
       - .env
     environment:
-      VIRTUAL_HOST: tech.namooinc.com
+      VIRTUAL_HOST: meeting.namooinc.com
       VIRTUAL_PORT: 3000
-      LETSENCRYPT_HOST: tech.namooinc.com
+      LETSENCRYPT_HOST: meeting.namooinc.com
       LETSENCRYPT_EMAIL: admin@namooinc.com
     depends_on:
       - fastapi
