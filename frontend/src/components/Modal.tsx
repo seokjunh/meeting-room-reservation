@@ -62,6 +62,7 @@ const Modal = ({
   roomName: string;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [reserved, setReserved] = useState<IResevation[]>([]);
   const [reservedTimes, setReservedTimes] = useState<string[]>([]);
   const formatSelectDate = format(selectDate, "yyyy년 MM월 d일");
   const form = useForm<z.infer<typeof formSchema>>({
@@ -109,6 +110,7 @@ const Modal = ({
       }
 
       alert("성공적으로 작성되었습니다!");
+      setIsOpenModal(false);
     } catch (error) {
       console.error("요청 중 오류 발생:", error);
       alert("요청 중 문제가 발생했습니다. 네트워크를 확인해주세요.");
@@ -135,9 +137,11 @@ const Modal = ({
 
       const result: IResevation[] = await response.json();
 
-      const reserved = result.flatMap((v) => v.selectedTime);
-
-      setReservedTimes(reserved);
+      setReserved(result);
+      setReservedTimes((prev) => [
+        ...prev,
+        ...result.flatMap((v) => v.selectedTime),
+      ]);
     };
 
     fetchData();
@@ -145,7 +149,7 @@ const Modal = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-      <div className="flex w-[30rem] flex-col bg-white">
+      <div className="mx-auto flex w-[50rem] flex-col rounded-lg bg-white shadow-lg">
         <button
           type="button"
           className="cursor-pointer self-end overflow-hidden hover:bg-gray-300"
@@ -154,104 +158,137 @@ const Modal = ({
           <CloseIcon />
         </button>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 px-8 py-4"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xl font-semibold text-gray-800">
-                  회의실 예약 현황
-                </div>
-                <div className="text-gray-600">{formatSelectDate}</div>
+        <div className="flex gap-4 px-8 py-4">
+          <div className="flex w-[30%] flex-col gap-6">
+            <div>
+              <div className="text-gray-600">{formatSelectDate}</div>
+              <div className="text-xl font-semibold text-gray-800">
+                📅 {roomName} 예약 현황
               </div>
-              <button
-                type="submit"
-                className="cursor-pointer rounded-lg bg-blue-300 px-4 py-2 text-white hover:bg-blue-300/90"
-              >
-                예약하기
-              </button>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <FormField
-                control={form.control}
-                name="topic"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>회의명</FormLabel>
-                    <FormControl>
-                      <input
-                        className="rounded-md border px-3 py-2"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="attendees"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>참석자</FormLabel>
-                    <FormControl>
-                      <input
-                        placeholder="쉼표(,)로 구분하여 입력하세요."
-                        className="rounded-md border px-3 py-2"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div>시간을 선택하세요.</div>
-                <div className="flex gap-2">
-                  <div className="h-5 w-5 bg-gray-200" />
-                  <div>예약 불가</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2">
-                {times.map((time) => (
-                  <TimeButton
-                    key={time}
-                    time={time}
-                    selectedTime={selectedTime}
-                    reservedTimes={reservedTimes}
-                    onMouseDown={() => {
-                      setIsDragging(true);
-                      toggleTime(time);
-                    }}
-                    onMouseEnter={() => {
-                      if (isDragging) toggleTime(time);
-                    }}
-                  />
+            {reserved.length === 0 ? (
+              <div className="text-gray-400">예약된 일정이 없습니다.</div>
+            ) : (
+              <ul className="space-y-3 overflow-y-scroll h-[25.5rem]">
+                {reserved.map((reservation, _idx) => (
+                  <div
+                    key={reservation.topic}
+                    className="rounded-md border border-gray-200 p-3 shadow-sm transition hover:shadow"
+                  >
+                    <div className="text-sm text-gray-600">
+                      ⏰{" "}
+                      <span className="font-medium">
+                        {reservation.selectedTime.join(", ")}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-gray-800">
+                      {reservation.topic}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-500">
+                      👥 {reservation.attendees.join(", ")}
+                    </div>
+                  </div>
                 ))}
-              </div>
-            </div>
+              </ul>
+            )}
+          </div>
+          <div className="w-[70%]">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
+              >
+                <div className="flex self-end">
+                  <button
+                    type="submit"
+                    className="cursor-pointer rounded-lg bg-blue-300 px-4 py-2 text-white hover:bg-blue-300/90"
+                  >
+                    예약하기
+                  </button>
+                </div>
 
-            <FormField
-              control={form.control}
-              name="selectedTime"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <input type="hidden" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-red-500" />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
+                <div className="flex flex-col gap-2">
+                  <FormField
+                    control={form.control}
+                    name="topic"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>회의명</FormLabel>
+                        <FormControl>
+                          <input
+                            className="rounded-md border px-3 py-2"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="attendees"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>참석자</FormLabel>
+                        <FormControl>
+                          <input
+                            placeholder="쉼표(,)로 구분하여 입력하세요."
+                            className="rounded-md border px-3 py-2"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-500" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div>시간을 선택하세요.</div>
+                    <div className="flex gap-2">
+                      <div className="h-5 w-5 bg-gray-200" />
+                      <div>예약 불가</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-2">
+                    {times.map((time) => (
+                      <TimeButton
+                        key={time}
+                        time={time}
+                        selectedTime={selectedTime}
+                        reservedTimes={reservedTimes}
+                        onMouseDown={() => {
+                          setIsDragging(true);
+                          toggleTime(time);
+                        }}
+                        onMouseEnter={() => {
+                          if (isDragging) toggleTime(time);
+                          console.log(1);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="selectedTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <input type="hidden" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </div>
+        </div>
       </div>
     </div>
   );
