@@ -4,9 +4,6 @@
 # ruff 캐시 폴더
 .ruff_cache/
 
-# Python 버전 설정 파일
-.python-version
-
 .env
 
 app/__pycache__/
