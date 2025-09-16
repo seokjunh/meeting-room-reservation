@@ -6,9 +6,11 @@ import {
   endOfMonth,
   endOfWeek,
   format,
-  isBefore,
+  getMonth,
   isSaturday,
   isSunday,
+  isToday,
+  startOfDay,
   startOfMonth,
   startOfWeek,
   subMonths,
@@ -122,20 +124,16 @@ const Calendar = ({ roomName }: { roomName: string }) => {
 
           <div className="grid h-full grid-cols-7">
             {createMonth.map((date) => {
-              const parsedDate = format(date, "yyyy-MM-dd");
-              const today = format(new Date(), "yyyy-MM-dd");
-
-              const isToday = parsedDate === today;
+              const validation = getMonth(currentDate) === getMonth(date);
 
               return (
                 <button
                   key={date.toISOString()}
                   type="button"
-                  disabled={isBefore(parsedDate, today)}
                   className={`flex flex-col ${
-                    isBefore(parsedDate, today)
-                      ? "cursor-not-allowed bg-gray-200 opacity-60"
-                      : "cursor-pointer hover:bg-gray-200"
+                    validation
+                      ? "cursor-pointer hover:bg-gray-200"
+                      : "cursor-not-allowed bg-gray-200 opacity-60"
                   } `}
                   onClick={() => modalHandler(date)}
                 >
@@ -148,7 +146,7 @@ const Calendar = ({ roomName }: { roomName: string }) => {
                           : "text-gray-800"
                     }`}
                   >
-                    {isToday && (
+                    {isToday(date) && (
                       <div className="absolute inset-0 flex items-center justify-end">
                         <div className="h-8 w-8 rounded-full bg-blue-500 opacity-20" />
                       </div>
@@ -165,6 +163,10 @@ const Calendar = ({ roomName }: { roomName: string }) => {
             setIsOpenModal={setIsOpenModal}
             selectDate={selectDate}
             roomName={roomName}
+            isBefore={differenceInCalendarDays(
+              startOfDay(currentDate),
+              startOfDay(selectDate),
+            )}
           />
         )}
       </div>

@@ -56,10 +56,12 @@ const Modal = ({
   setIsOpenModal,
   selectDate,
   roomName,
+  isBefore,
 }: {
   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
   selectDate: Date;
   roomName: string;
+  isBefore: number;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [reserved, setReserved] = useState<IResevation[]>([]);
@@ -80,7 +82,7 @@ const Modal = ({
       ? selectedTime.filter((t) => t !== time)
       : [...selectedTime, time];
 
-    form.setValue("selectedTime", updated);
+    form.setValue("selectedTime", updated.sort());
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -152,7 +154,7 @@ const Modal = ({
       <div className="mx-auto flex w-[50rem] flex-col rounded-lg bg-white shadow-lg">
         <button
           type="button"
-          className="cursor-pointer self-end overflow-hidden hover:bg-gray-300"
+          className="cursor-pointer self-end"
           onClick={() => setIsOpenModal(false)}
         >
           <CloseIcon />
@@ -170,7 +172,7 @@ const Modal = ({
             {reserved.length === 0 ? (
               <div className="text-gray-400">예약된 일정이 없습니다.</div>
             ) : (
-              <ul className="space-y-3 overflow-y-scroll h-[25.5rem]">
+              <ul className="scrollbar-hide h-[25.5rem] space-y-3 overflow-y-scroll">
                 {reserved.map((reservation, _idx) => (
                   <div
                     key={reservation.topic}
@@ -202,7 +204,8 @@ const Modal = ({
                 <div className="flex self-end">
                   <button
                     type="submit"
-                    className="cursor-pointer rounded-lg bg-blue-300 px-4 py-2 text-white hover:bg-blue-300/90"
+                    disabled={isBefore > 0}
+                    className="cursor-pointer rounded-lg bg-blue-300 px-4 py-2 text-white hover:bg-blue-300/90 disabled:pointer-events-none"
                   >
                     예약하기
                   </button>
@@ -217,7 +220,8 @@ const Modal = ({
                         <FormLabel>회의명</FormLabel>
                         <FormControl>
                           <input
-                            className="rounded-md border px-3 py-2"
+                            disabled={isBefore > 0}
+                            className="rounded-md border px-3 py-2 disabled:border-gray-300"
                             {...field}
                           />
                         </FormControl>
@@ -235,7 +239,8 @@ const Modal = ({
                         <FormControl>
                           <input
                             placeholder="쉼표(,)로 구분하여 입력하세요."
-                            className="rounded-md border px-3 py-2"
+                            disabled={isBefore > 0}
+                            className="rounded-md border px-3 py-2 disabled:border-gray-300"
                             {...field}
                           />
                         </FormControl>
@@ -260,13 +265,13 @@ const Modal = ({
                         time={time}
                         selectedTime={selectedTime}
                         reservedTimes={reservedTimes}
+                        isBefore={isBefore}
                         onMouseDown={() => {
                           setIsDragging(true);
                           toggleTime(time);
                         }}
                         onMouseEnter={() => {
                           if (isDragging) toggleTime(time);
-                          console.log(1);
                         }}
                       />
                     ))}

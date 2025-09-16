@@ -2,12 +2,14 @@ const TimeButton = ({
   time,
   selectedTime,
   reservedTimes,
+  isBefore,
   onMouseDown,
   onMouseEnter,
 }: {
   time: string;
   selectedTime: string[];
   reservedTimes: string[];
+  isBefore: number;
   onMouseDown: () => void;
   onMouseEnter: () => void;
 }) => {
@@ -15,10 +17,9 @@ const TimeButton = ({
     <button
       key={time}
       type="button"
-      disabled={reservedTimes.includes(time)}
       onMouseDown={onMouseDown}
       onMouseEnter={onMouseEnter}
-      className={`cursor-pointer py-2 text-xl ${selectedTime.includes(time) ? "bg-gray-200" : "hover:bg-amber-100"} disabled:cursor-not-allowed disabled:bg-gray-200`}
+      className={`py-2 text-xl ${reservedTimes.includes(time) || isBefore > 0 ? "pointer-events-none cursor-not-allowed bg-gray-200" : "cursor-pointer hover:bg-amber-100"} ${selectedTime.includes(time) && "bg-gray-200"}`}
     >
       {time}
     </button>
