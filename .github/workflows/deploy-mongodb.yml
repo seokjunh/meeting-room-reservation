@@ -34,7 +34,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 32111
-          source: "./mongodb/docker-compose.yml"
+          source: "./docker-compose.yml"
           target: "/namooinc/db/mongodb/"
 
       - name: Run MongoDB Compose
@@ -48,4 +48,5 @@ jobs:
           script: |
             set -e
             cd /namooinc/db/mongodb
+
             docker compose up -d

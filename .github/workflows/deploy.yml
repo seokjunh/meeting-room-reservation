@@ -48,7 +48,6 @@ jobs:
           script: |
             mkdir -p /namooinc/web/meeting
 
-
       - name: Copy docker-compose.yml to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -68,6 +67,9 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           envs: MONGO_URL,VITE_API_URL
           script: |
+            set -e
             cd /namooinc/web/meeting
 
-            docker compose build --no-cache && docker compose down && docker compose up -d
+            docker compose build --no-cache
+            docker compose down
+            docker compose up -d
