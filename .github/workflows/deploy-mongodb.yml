@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 32111
           source: "./mongodb/docker-compose.yml"
-          target: "/namooinc/db/mongodb/docker-compose.yml"
+          target: "/namooinc/db/"
 
       - name: Run MongoDB Compose
         uses: appleboy/ssh-action@v1
