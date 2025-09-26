@@ -1,49 +1,34 @@
 services:
-  mongodb:
-    image: mongo
-    container_name: meeting-namoo-db
-    restart: always
-    ports:
-      - 27017:27017
-    env_file:
-      - .env
-    volumes:
-      - data:/data/db
-    networks:
-      - meeting-net
   fastapi:
     image: seokjunh/namoo-meeting:back-latest
     container_name: meeting-namoo-back
     restart: always
     ports:
       - 8000:8000
-    env_file:
-      - .env
-    depends_on:
-      - mongodb
+    environment:
+      MONGO_URL: ${MONGO_URL}
     networks:
       - meeting-net
+      - fastapi-mongo-net
   react:
     image: seokjunh/namoo-meeting:front-latest
     container_name: meeting-namoo-front
     restart: always
-    env_file:
-      - .env
     environment:
       VIRTUAL_HOST: meeting.namooinc.com
       VIRTUAL_PORT: 80
       LETSENCRYPT_HOST: meeting.namooinc.com
       LETSENCRYPT_EMAIL: admin@namooinc.com
+      VITE_API_URL: ${VITE_API_URL}
     depends_on:
       - fastapi
     networks:
       - meeting-net
       - proxy
 
-volumes:
-  data:
-
 networks:
   meeting-net:
+  fastapi-mongo-net:
+    external: true
   proxy:
     external: true
