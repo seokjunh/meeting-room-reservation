@@ -8,9 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      MONGO_URL: ${{ secrets.MONGO_URL }}
-      VITE_API_URL: ${{ secrets.VITE_API_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -26,7 +23,6 @@ jobs:
 
       - name: React Build and push
         uses: docker/build-push-action@v6
-
         with:
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL }}
