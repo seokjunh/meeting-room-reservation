@@ -134,10 +134,12 @@ const Modal = ({
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/get?roomName=${encodeURIComponent(roomName)}&date=${encodeURIComponent(formatSelectDate)}`,
+        `${import.meta.env.VITE_API_URL}/get?roomName=${roomName}&date=${formatSelectDate}`,
       );
 
       const result: IResevation[] = await response.json();
+
+      console.log(result)
 
       setReserved(result);
       setReservedTimes((prev) => [
