@@ -15,7 +15,7 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import CalendarIcon from "@/icons/CalendarIcon";
 import NextIcon from "@/icons/NextIcon";
 import PrevIcon from "@/icons/PrevIcon";
@@ -130,7 +130,7 @@ const Calendar = ({ roomName }: { roomName: string }) => {
                 <button
                   key={date.toISOString()}
                   type="button"
-                  className={`flex flex-col ${
+                  className={`flex flex-col outline-none ${
                     validation
                       ? "cursor-pointer hover:bg-gray-200"
                       : "cursor-not-allowed bg-gray-200 opacity-60"

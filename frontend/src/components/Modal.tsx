@@ -1,5 +1,11 @@
 import { format } from "date-fns";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import CloseIcon from "@/icons/CloseIcon";
@@ -119,6 +125,31 @@ const Modal = ({
     }
   };
 
+  const handleOutsideClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    // 모달 바깥 클릭 시 닫기
+    if (e.target === e.currentTarget) {
+      setIsOpenModal(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpenModal(false);
+      }
+    };
+
+    // 이벤트 리스너 등록
+    document.addEventListener("keydown", handleEscape);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [setIsOpenModal]);
+
   useEffect(() => {
     const mouseUp = () => {
       setIsDragging(false);
@@ -138,9 +169,9 @@ const Modal = ({
       );
 
       if (!response.ok) {
-      const text = await response.text();
-      console.error('Fetch error:', text);
-      return;
+        const text = await response.text();
+        console.error("Fetch error:", text);
+        return;
       }
 
       const result: IResevation[] = await response.json();
@@ -156,7 +187,10 @@ const Modal = ({
   }, [roomName, formatSelectDate]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/50"
+      onClick={handleOutsideClick}
+    >
       <div className="mx-auto flex w-[50rem] flex-col rounded-lg bg-white shadow-lg">
         <button
           type="button"
