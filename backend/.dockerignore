@@ -4,5 +4,6 @@ __pycache__/
 .vscode/
 .git/
 .gitignore
-*.env
+.env
+.env.*
 *.log

@@ -26,7 +26,10 @@ jobs:
 
       - name: React Build and push
         uses: docker/build-push-action@v6
+
         with:
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
           context: frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/namoo-meeting:front-latest

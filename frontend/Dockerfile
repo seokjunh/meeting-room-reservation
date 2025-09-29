@@ -6,8 +6,8 @@ RUN corepack enable
 WORKDIR /app
 COPY . .
 
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
