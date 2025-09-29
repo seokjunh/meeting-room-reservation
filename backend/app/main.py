@@ -31,7 +31,6 @@ async def create_reservation(req: Reservation):
 
 @app.get("/get")
 async def get_reservation(roomName: str, date: str):
-  print(roomName, date)
   query = {"roomName": roomName, "date": date}
   result = await database["reservations"].find(query).to_list()
 
