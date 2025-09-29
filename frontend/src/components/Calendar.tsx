@@ -15,7 +15,7 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CalendarIcon from "@/icons/CalendarIcon";
 import NextIcon from "@/icons/NextIcon";
 import PrevIcon from "@/icons/PrevIcon";

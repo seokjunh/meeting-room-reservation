@@ -69,6 +69,7 @@ const Modal = ({
   roomName: string;
   isBefore: number;
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [reserved, setReserved] = useState<IResevation[]>([]);
   const [reservedTimes, setReservedTimes] = useState<string[]>([]);
@@ -135,20 +136,10 @@ const Modal = ({
   };
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsOpenModal(false);
-      }
-    };
-
-    // 이벤트 리스너 등록
-    document.addEventListener("keydown", handleEscape);
-
-    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [setIsOpenModal]);
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, []);
 
   useEffect(() => {
     const mouseUp = () => {
@@ -188,8 +179,14 @@ const Modal = ({
 
   return (
     <div
+      ref={modalRef}
+      role="dialog"
+      tabIndex={-1}
       className="fixed inset-0 flex items-center justify-center bg-black/50"
       onClick={handleOutsideClick}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") setIsOpenModal(false);
+      }}
     >
       <div className="mx-auto flex w-[50rem] flex-col rounded-lg bg-white shadow-lg">
         <button
