@@ -137,6 +137,13 @@ const Modal = ({
         `${API_URL}/get?roomName=${roomName}&date=${formatSelectDate}`,
       );
 
+      if (!response.ok) {
+      // 에러 처리: 상태 코드가 200~299가 아닌 경우
+      const text = await response.text();
+      console.error('Fetch error:', text);
+      return;
+      }
+
       const result: IResevation[] = await response.json();
 
       console.log(result)
