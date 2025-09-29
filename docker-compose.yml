@@ -3,8 +3,6 @@ services:
     image: seokjunh/namoo-meeting:back-latest
     container_name: meeting-namoo-back
     restart: always
-    ports:
-      - 8000:8000
     environment:
       MONGO_URL: ${MONGO_URL}
     networks:
