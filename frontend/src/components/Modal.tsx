@@ -134,7 +134,7 @@ const Modal = ({
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/get?roomName=${roomName}&date=${formatSelectDate}`,
+        `${import.meta.env.VITE_API_URL}/get?roomName=${encodeURIComponent(roomName)}&date=${encodeURIComponent(formatSelectDate)}`,
       );
 
       const result: IResevation[] = await response.json();
